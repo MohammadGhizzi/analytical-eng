@@ -73,7 +73,10 @@ This project demonstrates my data engineering skills by creating a data pipeline
 
 ![Architecture Diagram](diagrams/ae_sda_full.png)
 ![table overview](diagrams/cs.jpg)
-![Metabase charts](diagrams/q1.png,q2.png,q3.png)
+![Metabase chart 1](diagrams/Q1.png)
+![Metabase chart 2](diagrams/Q2.png)
+![Metabase chart 3](diagrams/Q3.png)
+
 ## Key Strengths Demonstrated
 
 - **Cloud Computing:** Leveraging AWS EC2 and S3 for scalable data ingestion and processing.
