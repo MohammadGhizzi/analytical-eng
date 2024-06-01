@@ -1,0 +1,95 @@
+Snowflake Automated Data Aggregation Setup
+
+Overview
+This guide will walk you through the steps to set up automated processes for daily and weekly data aggregations in Snowflake. It includes developing scripts for data extraction, aggregation, and loading, and scheduling these processes using Snowflake tasks and stored procedures.
+
+Objectives
+1. Automate daily and weekly data aggregations.
+2. Seamlessly load aggregated data into the Snowflake database.
+3. Maintain data integrity and security throughout the process.
+
+Steps
+1. Snowflake Table Aggregations
+
+Daily Aggregation Procedure
+CREATE OR REPLACE PROCEDURE tpcds.intermediate.populating_daily_aggregated_sales_incrementally()
+  RETURNS VARCHAR
+  LANGUAGE SQL
+  AS
+  $$
+  DECLARE 
+    LAST_SOLD_DATE_SK number;
+  BEGIN
+    SELECT MAX(SOLD_DATE_SK) INTO :LAST_SOLD_DATE_SK FROM SF_TPCDS.INTERMEDIATE.DAILY_AGGREGATED_SALES;
+    -- INSERT REST OF THE CODE HERE USED TO CREATE DAILY FACT TABLE IN PREVIOUS STEPS. REPLACE $LAST_SOLD_DATE_SK with :LAST_SOLD_DATE_SK instead. --
+  END
+  $$;
+
+Weekly Aggregation Procedure
+CREATE OR REPLACE PROCEDURE tpcds.analytics.populating_weekly_aggregated_sales_incrementally()
+  RETURNS VARCHAR
+  LANGUAGE SQL
+  AS
+  $$
+  DECLARE 
+    LAST_SOLD_WK_SK number;
+  BEGIN
+    SELECT MAX(SOLD_WK_SK) INTO :LAST_SOLD_WK_SK FROM SF_TPCDS.ANALYTICS.WEEKLY_AGGREGATED_SALES;
+    -- INSERT REST OF THE CODE HERE USED TO CREATE WEEKLY FACT TABLE IN PREVIOUS STEPS. REPLACE $LAST_SOLD_WK_SK with :LAST_SOLD_WK_SK instead. --
+  END
+  $$;
+
+2. Creating Snowflake Stored Procedures
+
+Customer Dimension Procedure
+CREATE OR REPLACE PROCEDURE TPCDS.ANALYTICS.populating_customer_dimension_using_scd_type_2()
+  RETURNS VARCHAR
+  LANGUAGE SQL
+  AS
+  $$
+  BEGIN
+    -- INSERT CODE HERE USED TO CREATE CUSTOMER DIMENSIONS IN PREVIOUS STEPS --
+  END
+  $$;
+
+3. Creating Snowflake Tasks
+
+Task for Daily Sales Aggregation
+CREATE OR REPLACE TASK tpcds.intermediate.creating_daily_aggregated_sales_incrementally
+    WAREHOUSE = COMPUTE_WH
+    SCHEDULE = 'USING CRON * 8 * * * UTC'
+    AS
+CALL tpcds.intermediate.populating_daily_aggregated_sales_incrementally();
+
+Task for Weekly Sales Aggregation
+CREATE OR REPLACE TASK tpcds.analytics.creating_weekly_aggregated_sales_incrementally
+    WAREHOUSE = COMPUTE_WH
+    SCHEDULE = 'USING CRON 0 8 * * 0 UTC'
+    AS
+CALL tpcds.analytics.populating_weekly_aggregated_sales_incrementally();
+
+Task for Customer Dimension
+CREATE OR REPLACE TASK tpcds.analytics.updating_customer_dimension
+    WAREHOUSE = COMPUTE_WH
+    SCHEDULE = 'USING CRON 0 8 * * 1 UTC'
+    AS
+CALL TPCDS.ANALYTICS.populating_customer_dimension_using_scd_type_2();
+
+4. Managing Tasks
+
+Resuming Tasks
+ALTER TASK tpcds.intermediate.creating_daily_aggregated_sales_incrementally RESUME;
+ALTER TASK tpcds.analytics.creating_weekly_aggregated_sales_incrementally RESUME;
+ALTER TASK tpcds.analytics.updating_customer_dimension RESUME;
+
+Testing Tasks
+EXECUTE TASK tpcds.intermediate.creating_daily_aggregated_sales_incrementally;
+EXECUTE TASK tpcds.analytics.creating_weekly_aggregated_sales_incrementally;
+EXECUTE TASK tpcds.analytics.updating_customer_dimension;
+
+Verifying Task Execution
+1. Go to the Databases section in the Snowflake console.
+2. Select the database TPCDS.
+3. Select the appropriate schema (INTERMEDIATE or ANALYTICS).
+4. Navigate to the Tasks section and select the task.
+5. Click on Run History to view execution status.
