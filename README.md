@@ -93,6 +93,6 @@ This repository does not contain any private data. The scripts and documentation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/data-engineering-project.git
+   git clone https://github.com/your-username/analytical-eng.git
 
 2. Follow the setup instructions in the scripts folder to replicate the environment.
