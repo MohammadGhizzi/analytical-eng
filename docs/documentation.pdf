@@ -1,0 +1,150 @@
+Airbyte and Metabase Setup Documentation
+Overview
+This guide will walk you through the steps to set up Airbyte and Metabase on separate EC2 instances running Ubuntu. The provided scripts will install necessary dependencies, set up Docker, and deploy Airbyte and Metabase.
+
+Prerequisites
+EC2 Instances: Two EC2 instances running Ubuntu (one for Airbyte and one for Metabase).
+Security Groups: Ensure the security groups for these instances allow traffic on the necessary ports (e.g., 3000 for Metabase).
+Setup Instructions
+Part 1: Setting Up Airbyte
+Step 1: Connect to the EC2 Instance
+Connect to your Airbyte EC2 instance using SSH:
+
+bash
+Copy code
+ssh -i /path/to/your-key.pem ubuntu@<Airbyte_Instance_Public_IP>
+Step 2: Create and Run the Airbyte Setup Script
+Create the airbyte.sh script:
+
+bash
+Copy code
+nano airbyte.sh
+Copy and paste the following content into airbyte.sh:
+
+bash
+Copy code
+#!/bin/bash
+
+# Update package list and upgrade all packages
+sudo apt update -y
+sudo apt upgrade -y
+
+# Install Docker
+sudo apt install -y docker.io
+
+# Add user to Docker group
+sudo usermod -aG docker ubuntu
+
+# Install Docker Compose v2
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+docker compose version
+
+# Download and run Airbyte
+wget https://s3.amazonaws.com/weclouddata/data/data/run-ab-platform.sh
+chmod +x run-ab-platform.sh
+./run-ab-platform.sh -b
+
+# Print completion message
+echo "Airbyte installation and setup complete."
+Save and close the file.
+
+Make the script executable:
+
+bash
+Copy code
+chmod +x airbyte.sh
+Run the script:
+
+bash
+Copy code
+./airbyte.sh
+Step 3: Access Airbyte
+Once the setup is complete, you can access Airbyte on your browser by navigating to the public IP address of your Airbyte instance on port 8000:
+
+arduino
+Copy code
+http://<Airbyte_Instance_Public_IP>:8000
+Part 2: Setting Up Metabase
+Step 1: Connect to the EC2 Instance
+Connect to your Metabase EC2 instance using SSH:
+
+bash
+Copy code
+ssh -i /path/to/your-key.pem ubuntu@<Metabase_Instance_Public_IP>
+Step 2: Create and Run the Metabase Setup Script
+Create the metabase_setup.sh script:
+
+bash
+Copy code
+nano metabase_setup.sh
+Copy and paste the following content into metabase_setup.sh:
+
+bash
+Copy code
+#!/bin/bash
+
+# Update package list and upgrade all packages
+sudo apt update -y
+sudo apt upgrade -y
+
+# Install Docker
+sudo apt install -y docker.io
+
+# Add user to Docker group
+sudo usermod -aG docker ubuntu
+
+# Pull the Metabase docker image
+docker pull metabase/metabase:latest
+
+# Run the Metabase docker container
+docker run -d -p 3000:3000 --name metabase metabase/metabase
+
+# Print completion message
+echo "Metabase installation and setup complete."
+echo "You can access Metabase at http://<Public_IP>:3000"
+Save and close the file.
+
+Make the script executable:
+
+bash
+Copy code
+chmod +x metabase_setup.sh
+Run the script:
+
+bash
+Copy code
+./metabase_setup.sh
+Step 3: Access Metabase
+Once the setup is complete, you can access Metabase on your browser by navigating to the public IP address of your Metabase instance on port 3000:
+
+Copy code
+http://<Metabase_Instance_Public_IP>:3000
+Post-Setup Configuration
+Airbyte
+Initial Setup: Follow the on-screen instructions to set up Airbyte.
+Sources and Destinations: Add your data sources and destinations as needed.
+Metabase
+Initial Setup: Follow the on-screen instructions to set up Metabase.
+Database Connections: Connect Metabase to your data sources.
+Create Dashboards: Start creating dashboards and visualizations based on your data.
+Troubleshooting
+Permissions: Ensure that the ubuntu user is added to the Docker group.
+Ports: Ensure that the security groups allow traffic on the necessary ports (8000 for Airbyte, 3000 for Metabase).
+Logs: Check Docker logs for any errors if the services do not start as expected.
+bash
+Copy code
+# For Airbyte
+docker logs -f airbyte
+
+# For Metabase
+docker logs -f metabase
+Conclusion
+By following this guide, you should have Airbyte and Metabase set up and running on your respective EC2 instances. This setup will enable you to efficiently manage and visualize your data pipelines.
+
+
+
+
+
