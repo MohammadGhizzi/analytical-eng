@@ -22,11 +22,11 @@ This project demonstrates my data engineering skills by creating a data pipeline
 
 - **Steps:**
   - Create a Snowflake database called "TPCDS" and schema called "RAW".
-  - Create a table in RAW schema called "inventory", [with the following columns:](diagrams/inventory_table)
+  - Create a table in RAW schema called "inventory", [with the following columns:](diagrams/inventory_table.jpg)
   - Launch two Ubuntu EC2 instances: one for Airbyte and one for Metabase.
   - Install Docker and Docker Compose on both instances.
 
-[Detailed Airbyte Setup Script](scripts/setup_airbyte.sh)
+[Detailed Airbyte Setup Script](scripts/airbyte_setup.sh)
 
 ### 2. AWS Lambda Function
 
@@ -49,7 +49,7 @@ This project demonstrates my data engineering skills by creating a data pipeline
   - Configure Airbyte to connect to the Postgres database and Snowflake.
   - Set up the data ingestion pipeline.
 
-[Airbyte Setup Details](docs/project_documentation.pdf)
+[Airbyte Setup Details](docs/documentation.pdf)
 
 ### 4. Data Modeling in Snowflake
 
@@ -67,13 +67,13 @@ This project demonstrates my data engineering skills by creating a data pipeline
   - Connect Metabase to the Snowflake database.
   - Create reports based on business requirements.
 
-[Metabase Setup Script](scripts/setup_metabase.sh)
+[Metabase Setup Script](scripts/metabase_setup.sh)
 
-## Architecture and Workflow
+## Architecture 
 
-![Architecture Diagram](images/architecture_diagram.png)
-![Workflow Diagram](images/workflow_diagram.png)
-
+![Architecture Diagram](images/ae_sda_full.png)
+![table overview](images/cs.jpg)
+![Metabase charts](diagrams/metabase_charts.pdf)
 ## Key Strengths Demonstrated
 
 - **Cloud Computing:** Leveraging AWS EC2 and S3 for scalable data ingestion and processing.

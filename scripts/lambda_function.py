@@ -5,21 +5,22 @@ import snowflake.connector as sf
 
 def lambda_handler(event, context):
 
-    url = 'https://de-materials-tpcds.s3.ca-central-1.amazonaws.com/inventory.csv'
+    
+    # url = 'https://de-materials-tpcds.s3.ca-central-1.amazonaws.com/inventory.csv'
     destination_folder = '/tmp'
     file_name = 'inventory.csv'
     local_file_path = '/tmp/inventory.csv'
     
     # Snowflake connection parameters
-    account = ''
-    warehouse = 'COMPUTE_WH' #you have to create a new warehouse in snowflake, Create warehouse COMPUTE_WH and proccessed 
-    database = 'tpcds'
-    schema = 'raw_air' #you can either create another scehma to make sure you dont touch the original schema, or just use the original one if you know what to do (not recommended)
+    account = '-'
+    warehouse = 'COMPUTE_WH'
+    database = 'TPCDS'
+    schema = 'RAW'
     table = 'inventory'
     user = ''
     password = ''
     role='accountadmin'
-    stage_name = 'inv_Stage' #stages are important in Datawarehouses
+    stage_name = 'inv_Stage'
 
     # Download the data from the API endpoint
     response = requests.get(url)
@@ -58,7 +59,7 @@ def lambda_handler(event, context):
     
 
     
-    create_stage_query = f"CREATE OR REPLACE STAGE {stage_name} FILE_FORMAT =COMMA_CSV overwrite=true;" 
+    create_stage_query = f"CREATE OR REPLACE STAGE {stage_name} FILE_FORMAT =COMMA_CSV OVERWRITE = "
     cursor.execute(create_stage_query)
 
     # Copy the file from local to the stage
