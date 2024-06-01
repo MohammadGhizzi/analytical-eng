@@ -73,7 +73,7 @@ This project demonstrates my data engineering skills by creating a data pipeline
 
 ![Architecture Diagram](diagrams/ae_sda_full.png)
 ![table overview](diagrams/cs.jpg)
-![Metabase chart 1](diagrams/Q1.png)
+![Metabase chart 1](diagrams/q1.png)
 ![Metabase chart 2](diagrams/Q2.png)
 ![Metabase chart 3](diagrams/Q3.png)
 
